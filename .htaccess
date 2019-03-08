@@ -1,0 +1,5 @@
+RewriteEngine On
+
+RewriteRule ^app\/([^\/]+)\/([^\/]+)\/([^\/]+)\/? index.php?route=$1.$2.$3 [L]
+RewriteRule ^app\/([^\/]+)\/([^\/]+)\/?  index.php?route=$1.$2 [L]
+RewriteRule ^app\/([^\/]+)\/?  index.php?route=$1 [L]

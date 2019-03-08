@@ -1,0 +1,12 @@
+root: 'statics.hello'
+list:
+  - 'statics.hello'
+  - 'articles.list'
+  - 'articles.show'
+  - 'articles.new'
+  - 'articles.edit'
+  - 'articles.create'
+  - 'articles.update'
+  - 'articles.destroy'
+  - 'events.list'
+not_found: 'statics.not-found'
