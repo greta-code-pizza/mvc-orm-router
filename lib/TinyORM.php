@@ -6,11 +6,25 @@ use \PDO;
 use Symfony\Component\Yaml\Yaml;
 
 class TinyORM {
-  private static function dbConnect() {
-    $config = Yaml::parseFile('./config/database.yml');
-    $bdd = new PDO("mysql:host={$config['host']};dbname={$config['database']};charset=utf8", $config['username'], $config['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+  // Méthodes de classe
 
-    return $bdd;
+  /*
+   * Retourne les valeurs "désinfectés" si toutes les valeurs
+   * attendues sont présentes
+   */
+  public static function sanitize() {
+    $sanitized = [];
+
+    if (!self::hasExpectedPost()) { die('There is a missing key'); }
+
+    foreach (self::authorized() as $authorized) {
+      if (!isset($_POST[$authorized])) { continue; }
+
+      $value = htmlspecialchars($_POST[$authorized]);
+      $sanitized[":" . $authorized] = $value;
+    }
+
+    return $sanitized;
   }
 
   public static function all() {
@@ -65,7 +79,7 @@ class TinyORM {
     return $req;
   }
 
-  public function destroy($id) {
+  public static function destroy($id) {
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
 
@@ -73,6 +87,31 @@ class TinyORM {
     $req->execute(array(':id' => $id));
 
     return $req;
+  }
+
+  private static function dbConnect() {
+    $config = Yaml::parseFile('./config/database.yml');
+    $bdd = new PDO("mysql:host={$config['host']};dbname={$config['database']};charset=utf8", $config['username'], $config['password'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+
+    return $bdd;
+  }
+
+  private static function authorized() {
+    return self::AUTHORIZED || [];
+  }
+
+  private static function expected() {
+    return self::EXPECTED || [];
+  }
+
+  private static function hasExpectedPost() {
+    foreach(self::expected as $expected) {
+      if (!array_key_exists($expected, $_POST)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private static function tableize($class) {

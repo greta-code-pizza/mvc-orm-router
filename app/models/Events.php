@@ -5,11 +5,12 @@ namespace DBProject\App\Models;
 use \DBProject\Lib\TinyORM;
 
 class Events extends TinyORM {
-  const AUTHORIZED = [
-    'start',
-    'end',
-    'title'
-  ];
+  // Règles de validation
+
+  const AUTHORIZED = ['start', 'end', 'title'];
+  const EXPECTED = ['start', 'end', 'title'];
+
+  // Méthodes d'instance
 
   public function serializeAll() {
     $events = self::all();

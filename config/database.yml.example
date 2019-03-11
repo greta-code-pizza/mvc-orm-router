@@ -1,4 +1,4 @@
-host: localhost
-database: dbname
-username: username
-password: password
+host: myHost
+database: myDatabase
+username: myDatabaseUsername
+password: myDatabasePassword

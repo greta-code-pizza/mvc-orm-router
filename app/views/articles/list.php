@@ -5,7 +5,7 @@
 
   ob_start();
 ?>
-<a href="/DBProject/app/statics/hello">Revenir à la page d'accueil</a>
+<a href="/DBProject/app/articles/list">Revenir à la liste des articles</a>
 
 <?php foreach ($articles as $article) { ?>
   <h1><?= $article['title'] ?></h1>

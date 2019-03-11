@@ -8,40 +8,55 @@ use Symfony\Component\Yaml\Yaml;
 class TinyRouter {
   private $applicationController;
 
+    /* Méthodes de classe */
+
   private static function routes() {
     return Yaml::parseFile('./config/routes.yml');
   }
+
+
+  /* Méthodes d'instance */
 
   public function __construct($route=null) {
     $this->route = $route;
     $this->applicationController = new ApplicationController();
   }
 
+  /* Méthode principale du router */
   public function call() {
     $routes = self::routes();
 
-    if (is_null($this->route)) { $this->redirectToRoot($routes); }
+    /*
+     * On redirige vers root (dans config/routes.yml)
+     * lorsqu'on a pas de paramètre d'url.
+     */
+    if (is_null($this->route)) { $this->redirect($routes['root']); }
 
-    $baseRoute = $this->baseRoute($this->route);
-
-    if (in_array($baseRoute, $routes['list']) || $this->route == $routes['not_found']) {
-      $params = $this->routeToParams($this->route);
-      $this->callController($params);
+    /* On appel notre controller si la route est valide (présent dans list ou not_found) */
+    if ($this->hasValidRoute()) {
+      $this->callController();
       return;
     }
 
+    /*
+     * On tombe ici uniquement si la route n'est pas valide
+     * à ce moment on redéfini la route qui devient not_found
+     * avant de rappeler la méthode courante
+     */
     $this->route = $routes['not_found'];
     $this->call();
   }
 
-  public function redirectToRoot($routes) {
-    $this->route = $routes['root'];
+  public function redirect($route) {
+    $this->route = $route;
     $this->call();
   }
 
-  private function callController($params) {
+  private function callController() {
+    $params = $this->routeToParams($this->route);
     require("app/controllers/{$params['controller']}.php");
     $controllerName = '\DBProject\App\Controllers\\' . $params['controller'];
+
     $controller = new $controllerName();
 
     if ($params['id']) {
@@ -51,6 +66,16 @@ class TinyRouter {
     }
   }
 
+  /*
+   * Transforme une route de type articles.show.12
+   * en tableau d'informations:
+   * [
+   *  'controller' => 'ArticlesController',
+   *  'method' => 'show',
+   *  'id' => 12,
+   *  'view' => 'app/views/articles/show.php'
+   * ]
+   */
   private function routeToParams($route) {
     $exp = explode('.', $route);
 
@@ -74,7 +99,18 @@ class TinyRouter {
     return $exp[0] . '.' . $exp[1];
   }
 
+  /* Transforme ['Ma', 'super', 'methode'] en MaSuperMéthode */
   private function arrayToCamel($ary) {
     return str_replace(' ', '', ucwords(join(' ', $ary)));
+  }
+
+  /*
+   * @return Boolean true si la route est valide, sinon false
+   */
+  private function hasValidRoute() {
+    $routes = self::routes();
+    $baseRoute = $this->baseRoute($this->route);
+
+    return in_array($baseRoute, $routes['list']) || $this->route == $routes['not_found'];
   }
 }

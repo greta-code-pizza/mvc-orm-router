@@ -1,4 +1,9 @@
-Ce repo est à destination des stagiaires les plus en avance sur leurs projet. Il aborde les notions de framework avec un mini orm et un router.
+Ce repo est à destination des stagiaires les plus en avance sur leurs projet.
+
+- ajout d'un mini orm
+- ajout d'un dossier de configuration
+- redirection d'url avec le .htaccess
+- convention over configuration
 
 ## Installation
 
