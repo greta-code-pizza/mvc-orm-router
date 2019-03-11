@@ -46,6 +46,8 @@ class TinyORM {
   }
 
   public static function create($ary) {
+    $ary = self::sanitize();
+
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
 
@@ -59,6 +61,8 @@ class TinyORM {
   }
 
   public static function update($id, $ary) {
+    $ary = self::sanitize();
+    
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
     $arySet = [];
