@@ -30,15 +30,14 @@ class ArticlesController extends ApplicationController {
 
   # POST
   public function create() {
-    $sanitized = $this->sanitize(Articles::AUTHORIZED);
-    Articles::create($sanitized);
+    Articles::create($_POST);
     header('Location: /DBProject/app/articles/list');
   }
 
   # PUT
   public function update($id) {
-    $sanitized = $this->sanitize(Articles::AUTHORIZED);
-    Articles::update($id, $sanitized);
+
+    Articles::update($id, $_POST);
     header('Location: /DBProject/app/articles/show/' . $id);
   }
 

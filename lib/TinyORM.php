@@ -12,15 +12,15 @@ class TinyORM {
    * Retourne les valeurs "désinfectés" si toutes les valeurs
    * attendues sont présentes
    */
-  public static function sanitize() {
+  public static function sanitize($ary) {
     $sanitized = [];
 
     if (!self::hasExpectedPost()) { die('There is a missing key'); }
 
     foreach (self::authorized() as $authorized) {
-      if (!isset($_POST[$authorized])) { continue; }
+      if (!isset($ary[$authorized])) { continue; }
 
-      $value = htmlspecialchars($_POST[$authorized]);
+      $value = htmlspecialchars($ary[$authorized]);
       $sanitized[":" . $authorized] = $value;
     }
 
@@ -46,7 +46,7 @@ class TinyORM {
   }
 
   public static function create($ary) {
-    $ary = self::sanitize();
+    $ary = self::sanitize($ary);
 
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
@@ -61,8 +61,8 @@ class TinyORM {
   }
 
   public static function update($id, $ary) {
-    $ary = self::sanitize();
-    
+    $ary = self::sanitize($ary);
+
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
     $arySet = [];
@@ -101,15 +101,23 @@ class TinyORM {
   }
 
   private static function authorized() {
-    return self::AUTHORIZED || [];
+    if(get_called_class()::EXPECTED !== NULL) {
+      return get_called_class()::EXPECTED;
+    }
+
+    return [];
   }
 
   private static function expected() {
-    return self::EXPECTED || [];
+    if (get_called_class()::EXPECTED !== NULL) {
+      return get_called_class()::EXPECTED;
+    }
+
+    return [];
   }
 
   private static function hasExpectedPost() {
-    foreach(self::expected as $expected) {
+    foreach(self::expected() as $expected) {
       if (!array_key_exists($expected, $_POST)) {
         return false;
       }
