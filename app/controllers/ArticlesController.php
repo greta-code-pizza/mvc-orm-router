@@ -3,6 +3,7 @@
 namespace DBProject\App\Controllers;
 
 use \DBProject\App\Models\Articles;
+use \DBProject\App\Models\Tags;
 
 class ArticlesController extends ApplicationController {
   # GET
@@ -13,31 +14,32 @@ class ArticlesController extends ApplicationController {
 
   # GET
   public function show($id) {
-    $article = Articles::find($id);
+    $article = Articles::findWithTags($id);
     require('app/views/articles/show.php');
   }
 
   # GET
   public function new() {
+    $tags = Tags::all();
     require('app/views/articles/new.php');
   }
 
   # GET
   public function edit($id) {
     $article = Articles::find($id);
+    $tags = Tags::all();
     require('app/views/articles/edit.php');
   }
 
   # POST
   public function create() {
-    Articles::create($_POST);
+    Articles::createWithTags();
     header('Location: /DBProject/app/articles/list');
   }
 
   # PUT
   public function update($id) {
-
-    Articles::update($id, $_POST);
+    Articles::updateWithTags($id);
     header('Location: /DBProject/app/articles/show/' . $id);
   }
 

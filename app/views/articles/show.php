@@ -11,6 +11,9 @@
 <br>
 
 <h1><?= $article['title'] ?></h1>
+<?php foreach ($article['tags'] as $tag) { ?>
+  <span><?= $tag['label'] ?></span>
+<?php } ?>
 <p><?= $article['content'] ?></p>
 
 <?php

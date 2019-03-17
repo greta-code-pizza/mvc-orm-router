@@ -15,7 +15,7 @@ class TinyORM {
   public static function sanitize($ary) {
     $sanitized = [];
 
-    if (!self::hasExpectedPost()) { die('There is a missing key'); }
+    if (!self::hasExpectedPost($ary)) { die('There is a missing key'); }
 
     foreach (self::authorized() as $authorized) {
       if (!isset($ary[$authorized])) { continue; }
@@ -39,10 +39,20 @@ class TinyORM {
     $db = self::dbConnect();
     $table = self::tableize(get_called_class());
 
-    $sth = $db->prepare("SELECT * FROM {$table} WHERE id = :id");
-    $sth->execute(array(':id' => $id));
+    $req = $db->prepare("SELECT * FROM {$table} WHERE id = :id");
+    $req->execute(array(':id' => $id));
 
-    return $sth->fetch();
+    return $req->fetch();
+  }
+
+  public static function where($key, $value) {
+    $db = self::dbConnect();
+    $table = self::tableize(get_called_class());
+
+    $req = $db->prepare("SELECT * FROM {$table} WHERE {$key} = :{$key}");
+    $req->execute(array(":{$key}" => $value));
+
+    return $req->fetchAll();
   }
 
   public static function create($ary) {
@@ -57,7 +67,7 @@ class TinyORM {
     $req = $db->prepare("INSERT INTO {$table}({$columns}) VALUES ({$values})");
     $req->execute($ary);
 
-    return $req;
+    return get_called_class()::find($db->lastInsertId());
   }
 
   public static function update($id, $ary) {
@@ -80,7 +90,7 @@ class TinyORM {
     $req = $db->prepare("UPDATE {$table} SET {$set} WHERE id = :id");
     $req->execute($ary);
 
-    return $req;
+    return get_called_class()::find($db->lastInsertId());
   }
 
   public static function destroy($id) {
@@ -116,9 +126,10 @@ class TinyORM {
     return [];
   }
 
-  private static function hasExpectedPost() {
+  private static function hasExpectedPost($ary) {
     foreach(self::expected() as $expected) {
-      if (!array_key_exists($expected, $_POST)) {
+
+      if (!array_key_exists($expected, $ary)) {
         return false;
       }
     }
@@ -127,6 +138,6 @@ class TinyORM {
   }
 
   private static function tableize($class) {
-    return lcfirst(end(explode('\\', $class)));
+    return ltrim(strtolower(preg_replace('/[A-Z]([A-Z](?![a-z]))*/', '_$0', end(explode('\\', $class)))), '_');
   }
 }

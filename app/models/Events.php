@@ -6,9 +6,9 @@ use \DBProject\Lib\TinyORM;
 
 class Events extends TinyORM {
   // Règles de validation
+  const AUTHORIZED  = ['start', 'end', 'title'];
+  const EXPECTED    = ['start', 'end', 'title'];
 
-  const AUTHORIZED = ['start', 'end', 'title'];
-  const EXPECTED = ['start', 'end', 'title'];
 
   // Méthodes d'instance
 
