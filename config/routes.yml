@@ -1,6 +1,9 @@
 root: 'statics.hello'
 list:
   - 'statics.hello'
+  - 'statics.send'
+  - 'passwords.new'
+  - 'passwords.valid'
   - 'articles.list'
   - 'articles.show'
   - 'articles.new'
@@ -9,4 +12,6 @@ list:
   - 'articles.update'
   - 'articles.destroy'
   - 'events.list'
+  - 'courses.list'
+
 not_found: 'statics.not-found'

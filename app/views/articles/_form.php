@@ -18,11 +18,9 @@
     <textarea name="content" style="width: 20%"><?= $article['content'] ? $article['content'] : '' ?></textarea>
   </div>
 
-  <input type="submit" value="<?= $method == 'post' ? 'Créer' : 'Editer' ?>">
+  <input type="submit" value="<?= $action == 'update' ? 'Editer' : 'Créer' ?>">
 </form>
 
 <script>
-$(document).ready(function() {
-    $('.select-tags').select2();
-});
+$(document).ready(function() { $('.select-tags').select2(); });
 </script>
