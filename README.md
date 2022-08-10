@@ -1,4 +1,4 @@
-Ce repo est à destination des stagiaires les plus en avance sur leurs projet.
+Ce repo est à destination des stagiaires les plus en avance sur leur projet.
 
 - ajout d'un mini orm
 - ajout d'un dossier de configuration
